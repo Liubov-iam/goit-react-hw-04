@@ -1,0 +1,19 @@
+.overlay {
+    position: fixed;
+    inset: 0px;
+    background-color: rgba(255, 255, 255, 0.75);
+    background: rgba(0, 0, 0, 0.75);
+}
+
+.modal {
+    inset: 50% auto auto 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    overflow: auto;
+    border-radius: 4px;
+}
+
+.modal img {
+    max-width: 100%;
+}
