@@ -5,7 +5,6 @@ import ErrorMessage from "../errorMessage/ErrorMessage";
 import LoadMoreBtn from "../loadMoreBtn/LoadMoreBtn";
 import ImageModal from "../imageModal/ImageModal";
 
-import { animateScroll } from "react-scroll";
 import { useState, useEffect } from "react";
 import { fetchImagesWithQuery } from "/src/images-api.js";
 import "./App.module.css";
@@ -16,7 +15,6 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState([]);
   const [page, setPage] = useState(1);
-  const [maxPage, setMaxPage] = useState();
   const [showBtn, setShowBtn] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [image, setImage] = useState();
@@ -26,7 +24,7 @@ function App() {
     setShowBtn(false);
     setImages([]);
     setPage(1);
-    setMaxPage();
+    setError(false);
   }
 
   function loadMore() {
@@ -37,6 +35,7 @@ function App() {
     setImage(image);
     setIsModalOpen(true);
   }
+
   function closeModal() {
     setIsModalOpen(false);
   }
@@ -46,23 +45,13 @@ function App() {
       if (!query) {
         return;
       }
-      if (page === maxPage) {
-        setShowBtn(false);
-        setError("No images more");
-        return;
-      }
 
       try {
         setLoading(true);
         const data = await fetchImagesWithQuery(query, page);
         const totalPages = data.total_pages;
-        setImages([...images, ...data.results]);
-        setMaxPage(totalPages);
+        setImages(prevImages => [...prevImages, ...data.results]);
         setShowBtn(page < totalPages);
-        setError(false);
-        if (page > 1) {
-          animateScroll.scrollMore(480, { duration: 500, smooth: true });
-        }
         if (totalPages === 0) {
           setError("No images");
         }
@@ -73,7 +62,7 @@ function App() {
       }
     }
     fetchImages();
-  }, [query, page, maxPage, images]);
+  }, [query, page]);
 
   return (
     <>
@@ -91,9 +80,13 @@ function App() {
         />
       )}
       {error && <ErrorMessage error={error} />}
-      {/* <Toaster position="top-right" /> */}
     </>
   );
 }
 
 export default App;
+
+
+
+
+
